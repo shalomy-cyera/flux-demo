@@ -9,17 +9,20 @@ jobs:
     runs-on: ubuntu-20.04
     outputs:
       matrix: ${{ steps.format_input.outputs.matrix }}
+      packages_to_build: ${{ steps.format_input.outputs.packages_to_build }}
     steps:
       - name: Format Input
         id: format_input
         run: |
           echo "matrix={\"packages_to_build\":[\"shalom,gal\"]}" >> $GITHUB_OUTPUT
+          echo "packages_to_build=shalom,gal" >> $GITHUB_OUTPUT
   test_matrix:
     name: Test Matrix
     runs-on: ubuntu-20.04
     needs: pre_build
     strategy:
-      matrix: ${{ fromJson(needs.pre_build.outputs.matrix) }}
+      matrix:
+        packages_to_build: ${{fromJson(needs.pre_build.outputs.matrix)}}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
