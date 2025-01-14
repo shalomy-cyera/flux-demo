@@ -1,11 +1,5 @@
 on:
   workflow_dispatch:
-    inputs:
-      packages_to_build:
-        required: false
-        type: string
-        description: Comma separated list of services name to build
-        default: shalom,gal
 
 name: Build Services
 
@@ -16,25 +10,16 @@ jobs:
     outputs:
       matrix: ${{ steps.format_input.outputs.matrix }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Set inputs
-        id: set_inputs
-        shell: bash
-        run: |
-          echo "packages_to_build=${{ inputs.packages_to_build }}" >> $GITHUB_OUTPUT
-
       - name: Format Input
         id: format_input
         run: |
-          echo "matrix={\"packages_to_build\":[\"${{ steps.input_handler.outputs.packages }}\"]}" >> $GITHUB_OUTPUT
+          echo "matrix={\"packages_to_build\":[\"shalom,gal\"]}" >> $GITHUB_OUTPUT
   test_matrix:
     name: Test Matrix
     runs-on: ubuntu-20.04
     needs: pre_build
     strategy:
-      matrix: ${{fromJson(needs.pre_build.outputs.matrix)}}
+      matrix: ${{ fromJson(fromJson(needs.pre_build.outputs.matrix).matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
