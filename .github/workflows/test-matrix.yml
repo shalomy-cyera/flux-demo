@@ -22,7 +22,7 @@ jobs:
     needs: pre_build
     strategy:
       matrix:
-        packages_to_build: ${{fromJson(needs.pre_build.outputs.matrix)}}
+        packages_to_build: ${{fromJson(needs.pre_build.outputs.packages_to_build)}}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
