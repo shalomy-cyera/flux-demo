@@ -28,4 +28,4 @@ jobs:
         id: set_inputs
         shell: bash
         run: |
-          echo ${{ toJson(matrix) }}
+          echo "${{ toJson(matrix) }}"
