@@ -1,0 +1,50 @@
+on:
+  workflow_dispatch:
+    inputs:
+      packages_to_build:
+        required: false
+        type: string
+        description: Comma separated list of services name to build. e.g - aws-s3-scanner,rds-cloner
+
+name: Build Services
+
+jobs:
+  pre_build:
+    name: Pre build
+    runs-on: ubuntu-20.04
+    outputs:
+      matrix: ${{ steps.format_input.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set inputs
+        id: set_inputs
+        shell: bash
+        run: |
+          echo "packages_to_build=${{ inputs.packages_to_build }}" >> $GITHUB_OUTPUT
+
+      - name: Format Input
+        id: format_input
+        run: |
+          echo "matrix={\"packages_to_build\":[\"${{ steps.input_handler.outputs.packages }}\"]}" >> $GITHUB_OUTPUT
+  test_matrix:
+    name: Test Matrix
+    runs-on: ubuntu-20.04
+    needs: pre_build
+    strategy:
+      matrix:
+        packages_to_build: ${{fromJson(needs.pre_build.outputs.matrix)}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set inputs
+        id: set_inputs
+        shell: bash
+        run: |
+          echo ${{ toJson(needs.pre_build.outputs.matrix) }} | jq -r '.packages_to_build[]' | xargs -I {} echo "packages_to_build={}" >> $GITHUB_OUTPUT
+          echo "packages_to_build=${{ steps.set_inputs.outputs.packages_to_build }}" >> $GITHUB_OUTPUT
+      - name: Test Matrix
+        run: |
+          echo "Testing matrix with packages: ${{ steps.set_inputs.outputs.packages_to_build }}"
