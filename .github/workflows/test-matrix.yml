@@ -14,14 +14,16 @@ jobs:
       - name: Format Input
         id: format_input
         run: |
-          echo "matrix={\"packages_to_build\":[\"shalom,gal\"]}" >> $GITHUB_OUTPUT
-          echo "packages_to_build=[shalom,gal]" >> $GITHUB_OUTPUT
+          echo "matrix={\"packages_to_build\":[\"shalom\",\"gal\"]}" >> $GITHUB_OUTPUT
+          echo "packages_to_build=[\"shalom\",\"gal\"]" >> $GITHUB_OUTPUT
+
   test_matrix:
     name: Test Matrix
     runs-on: ubuntu-20.04
     needs: pre_build
     strategy:
-      matrix: ${{ toJson(needs.pre_build.outputs.packages_to_build) }}
+      matrix:
+        package: ${{ fromJson(needs.pre_build.outputs.packages_to_build) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -30,4 +32,4 @@ jobs:
         id: set_inputs
         shell: bash
         run: |
-          echo ${{ matrix }}
+          echo "Processing package: ${{ matrix.package }}"
