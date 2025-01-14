@@ -15,7 +15,7 @@ jobs:
         id: format_input
         run: |
           echo "matrix={\"packages_to_build\":[\"shalom,gal\"]}" >> $GITHUB_OUTPUT
-          echo "packages_to_build=shalom,gal" >> $GITHUB_OUTPUT
+          echo "packages_to_build=[shalom,gal]" >> $GITHUB_OUTPUT
   test_matrix:
     name: Test Matrix
     runs-on: ubuntu-20.04
