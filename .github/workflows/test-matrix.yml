@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-20.04
     needs: pre_build
     strategy:
-      matrix: ${{ fromJson(fromJson(needs.pre_build.outputs.matrix).matrix) }}
+      matrix: ${{ fromJson(needs.pre_build.outputs.matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
