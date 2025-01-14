@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-20.04
     needs: pre_build
     strategy:
-      matrix: ${{ needs.pre_build.outputs.packages_to_build }}
+      matrix: ${{ toJson(needs.pre_build.outputs.packages_to_build) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
